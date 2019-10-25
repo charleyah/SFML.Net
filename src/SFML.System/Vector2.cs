@@ -1,6 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 
+#if NETSTANDARD2_1
+using System.Numerics;
+#endif
+
 namespace SFML.System
 {
     ////////////////////////////////////////////////////////////
@@ -155,6 +159,23 @@ namespace SFML.System
         /// <returns>Casting result</returns>
         ////////////////////////////////////////////////////////////
         public static explicit operator Vector2u(Vector2f v) => new Vector2u((uint)v.X, (uint)v.Y);
+
+#if NETSTANDARD2_1
+
+        /// <summary>
+        /// Implicit casting to System.Numerics Vector2
+        /// </summary>
+        /// <param name="v"></param>
+        public static implicit operator Vector2(Vector2f v) => new Vector2(v.X, v.Y);
+
+
+        /// <summary>
+        /// Implicit casting from System.Numerics Vector2
+        /// </summary>
+        /// <param name="v"></param>
+        public static implicit operator Vector2f(Vector2 v) => new Vector2f(v.X, v.Y);
+
+#endif
 
         /// <summary>X (horizontal) component of the vector</summary>
         public float X;

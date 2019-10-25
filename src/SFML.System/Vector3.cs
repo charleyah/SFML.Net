@@ -1,6 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 
+#if NETSTANDARD2_1
+using System.Numerics;
+#endif
+
 namespace SFML.System
 {
     ////////////////////////////////////////////////////////////
@@ -139,6 +143,23 @@ namespace SFML.System
         /// <returns>Integer description of the object</returns>
         ////////////////////////////////////////////////////////////
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
+
+
+#if NETSTANDARD2_1
+
+        /// <summary>
+        /// Implicit casting to System.Numerics Vector3
+        /// </summary>
+        /// <param name="v"></param>
+        public static implicit operator Vector3(Vector3f v) => new Vector3(v.X, v.Y, v.Z);
+
+        /// <summary>
+        /// Implicit casting from System.Numerics Vector3
+        /// </summary>
+        /// <param name="v"></param>
+        public static implicit operator Vector3f(Vector3 v) => new Vector3f(v.X, v.Y, v.Z);
+
+#endif
 
         /// <summary>X (horizontal) component of the vector</summary>
         public float X;
