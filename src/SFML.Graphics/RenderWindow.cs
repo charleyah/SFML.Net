@@ -583,6 +583,43 @@ namespace SFML.Graphics
             }
         }
 
+#if NETSTANDARD2_1
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Draw primitives defined by a span of vertices
+        /// </summary>
+        /// <param name="vertices">read only span to the vertices</param>
+        /// <param name="type">Type of primitives to draw</param>
+        ////////////////////////////////////////////////////////////
+        public void Draw(ReadOnlySpan<Vertex> vertices, PrimitiveType type)
+        {
+            Draw(vertices, type, RenderStates.Default);
+        }
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Draw primitives defined by a span of vertices
+        /// </summary>
+        /// <param name="vertices">read only span to the vertices</param>
+        /// <param name="type">Type of primitives to draw</param>
+        /// <param name="states">Render states to use for drawing</param>
+        ////////////////////////////////////////////////////////////
+        public void Draw(ReadOnlySpan<Vertex> vertices, PrimitiveType type, RenderStates states)
+        {
+            var marshaledStates = states.Marshal();
+
+            unsafe
+            {
+                fixed(Vertex* ptr = vertices)
+                {
+                    sfRenderWindow_drawPrimitives(CPointer, ptr, (uint)vertices.Length, type, ref marshaledStates);
+                }
+            }
+        }
+
+#endif
+
         ////////////////////////////////////////////////////////////
         /// <summary>
         /// Save the current OpenGL render states and matrices.

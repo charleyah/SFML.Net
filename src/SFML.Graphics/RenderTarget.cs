@@ -1,4 +1,9 @@
+#if NETSTANDARD2_1
+using System;
+#endif
+
 using SFML.System;
+
 
 namespace SFML.Graphics
 {
@@ -203,6 +208,29 @@ namespace SFML.Graphics
         /// <param name="states">Render states to use for drawing</param>
         ////////////////////////////////////////////////////////////
         void Draw(Vertex[] vertices, uint start, uint count, PrimitiveType type, RenderStates states);
+
+#if NETSTANDARD2_1
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Draw primitives defined by a span of vertices
+        /// </summary>
+        /// <param name="vertices">read only span to the vertices</param>
+        /// <param name="type">Type of primitives to draw</param>
+        ////////////////////////////////////////////////////////////
+        void Draw(ReadOnlySpan<Vertex> vertices, PrimitiveType type);
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Draw primitives defined by a span of vertices
+        /// </summary>
+        /// <param name="vertices">read only span to the vertices</param>
+        /// <param name="type">Type of primitives to draw</param>
+        /// <param name="states">Render states to use for drawing</param>
+        ////////////////////////////////////////////////////////////
+        void Draw(ReadOnlySpan<Vertex> vertices, PrimitiveType type, RenderStates states);
+
+#endif
 
         ////////////////////////////////////////////////////////////
         /// <summary>
