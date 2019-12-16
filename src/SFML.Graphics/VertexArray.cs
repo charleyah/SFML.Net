@@ -98,6 +98,28 @@ namespace SFML.Graphics
             }
         }
 
+#if NETSTANDARD2_1
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        ///  Gets a read-write span reference to the vertice array.
+        ///  If the vertice array is resized or appended to then accessing any 
+        ///  previously retrieved span will potentially result in undefined behavior.
+        /// </summary>
+        /// <returns>Span of vertex reference</returns>
+        ////////////////////////////////////////////////////////////
+        public Span<Vertex> GetSpan()
+        {
+            unsafe
+            {
+                checked
+                {
+                    return new Span<Vertex>(sfVertexArray_getVertex(CPointer, 0), (int)this.VertexCount);
+                }
+            }
+        }
+#endif
+
         ////////////////////////////////////////////////////////////
         /// <summary>
         /// Clear the vertex array
