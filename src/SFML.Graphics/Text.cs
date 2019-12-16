@@ -2,6 +2,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+
+#if NETSTANDARD2_1
+using System.Buffers;
+#endif
+
+
 using SFML.System;
 
 namespace SFML.Graphics
@@ -332,6 +338,38 @@ namespace SFML.Graphics
                    " OutlineThickness(" + OutlineThickness + ")" +
                    " Style(" + Style + ")";
         }
+
+#if NETSTANDARD2_1
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Updates the displayed string with a span of char. The span requires to be null terminated.
+        /// </summary>
+        /// <param name="chars">span of char to display</param>
+        ////////////////////////////////////////////////////////////
+        public void UpdateDisplayedString(ReadOnlySpan<char> chars)
+        {
+            if(chars[chars.Length - 1] != char.MinValue)
+            {
+                throw new ArgumentException("chars requires null terminator");
+            }
+
+            var utf32 = ArrayPool<byte>.Shared.Rent(Encoding.UTF32.GetByteCount(chars));
+
+            unsafe
+            {
+                fixed (char* charptr = chars)
+                fixed (byte* utf32ptr = utf32)
+                {
+                    Encoding.UTF32.GetBytes(charptr, chars.Length, utf32ptr, utf32.Length);
+                    sfText_setUnicodeString(CPointer, (IntPtr)utf32ptr);
+                }
+            }
+
+            ArrayPool<byte>.Shared.Return(utf32);
+        }
+
+#endif
 
         ////////////////////////////////////////////////////////////
         /// <summary>
