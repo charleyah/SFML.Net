@@ -221,6 +221,77 @@ namespace SFML.Graphics
             return this.Update(vertices, (uint)vertices.Length, offset);
         }
 
+#if NETSTANDARD2_1
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Update a part of the buffer from an span of vertices
+        /// assuming an offset of 0 and a vertex count the length of the passed span.
+        ///
+        /// If offset is 0 and vertexCount is equal to the size of
+        /// the currently created buffer, its whole contents are replaced.
+        ///
+        /// If offset is 0 and vertexCount is greater than the
+        /// size of the currently created buffer, a new buffer is created
+        /// containing the vertex data.
+        ///
+        /// If offset is 0 and vertexCount is less than the size of
+        /// the currently created buffer, only the corresponding region
+        /// is updated.
+        ///
+        /// If offset is not 0 and offset + vertexCount is greater
+        /// than the size of the currently created buffer, the update fails.
+        ///
+        /// No additional check is performed on the size of the vertex
+        /// span, passing invalid arguments will lead to undefined
+        /// behavior.
+        /// </summary>
+        /// <param name="vertices">Span of vertices to copy to the buffer</param>
+        ////////////////////////////////////////////////////////////
+        public bool Update(ReadOnlySpan<Vertex> vertices)
+        {
+            return this.Update(vertices, 0);
+        }
+
+        ////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Update a part of the buffer from an span of vertices
+        /// assuming a vertex count the length of the passed span.
+        ///
+        /// If offset is 0 and vertexCount is equal to the size of
+        /// the currently created buffer, its whole contents are replaced.
+        ///
+        /// If offset is 0 and vertexCount is greater than the
+        /// size of the currently created buffer, a new buffer is created
+        /// containing the vertex data.
+        ///
+        /// If offset is 0 and vertexCount is less than the size of
+        /// the currently created buffer, only the corresponding region
+        /// is updated.
+        ///
+        /// If offset is not 0 and offset + vertexCount is greater
+        /// than the size of the currently created buffer, the update fails.
+        ///
+        /// No additional check is performed on the size of the vertex
+        /// span, passing invalid arguments will lead to undefined
+        /// behavior.
+        /// </summary>
+        /// <param name="vertices">Span of vertices to copy to the buffer</param>
+        /// <param name="offset">Offset in the buffer to copy to</param>
+        ////////////////////////////////////////////////////////////
+        public bool Update(ReadOnlySpan<Vertex> vertices, uint offset)
+        {
+            unsafe
+            {
+                fixed (Vertex* verts = vertices)
+                {
+                    return sfVertexBuffer_update(CPointer, verts, (uint)vertices.Length, offset);
+                }
+            }
+        }
+
+#endif
+
         ////////////////////////////////////////////////////////////
         /// <summary>
         /// Copy the contents of another buffer into this buffer
