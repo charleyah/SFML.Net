@@ -92,8 +92,9 @@ namespace SFML.Graphics
             Position = copy.Position;
             Rotation = copy.Rotation;
             Scale = copy.Scale;
-
             Font = copy.Font;
+
+            _displayedString = copy._displayedString;
         }
 
         ////////////////////////////////////////////////////////////
@@ -156,25 +157,8 @@ namespace SFML.Graphics
         {
             get
             {
-                // Get a pointer to the source string (UTF-32)
-                var source = sfText_getUnicodeString(CPointer);
-
-                // Find its length (find the terminating 0)
-                uint length = 0;
-                unsafe
-                {
-                    for (var ptr = (uint*)source.ToPointer(); *ptr != 0; ++ptr)
-                    {
-                        length++;
-                    }
-                }
-
-                // Copy it to a byte array
-                var sourceBytes = new byte[length * 4];
-                Marshal.Copy(source, sourceBytes, 0, sourceBytes.Length);
-
-                // Convert it to a C# string
-                return Encoding.UTF32.GetString(sourceBytes);
+                ThrowIfInvalid();
+                return _displayedString;
             }
 
             set
@@ -190,6 +174,7 @@ namespace SFML.Graphics
                         sfText_setUnicodeString(CPointer, (IntPtr)ptr);
                     }
                 }
+                _displayedString = value;
             }
         }
 
@@ -346,6 +331,7 @@ namespace SFML.Graphics
         protected override void Destroy(bool disposing) => sfText_destroy(CPointer);
 
         private Font _font;
+        private string _displayedString;
 
         #region Imports
         [DllImport(CSFML.Graphics, CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]

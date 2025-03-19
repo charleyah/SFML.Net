@@ -40,11 +40,7 @@ namespace SFML
         {
             get
             {
-                if (_cPointer == IntPtr.Zero)
-                {
-                    throw new ObjectDisposedException($"This {GetType().Name} instance has been disposed and should not be used.");
-                }
-
+                ThrowIfInvalid();
                 return _cPointer;
             }
             protected set => _cPointer = value;
@@ -97,6 +93,18 @@ namespace SFML
         /// </summary>
         /// <returns>A string representation of the disposed object</returns>
         protected string MakeDisposedObjectString() => $"[{GetType().Name} (disposed)]";
+
+        /// <summary>
+        /// Throws ObjectDisposedException if CPointer is invalid
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"></exception>
+        protected void ThrowIfInvalid()
+        {
+            if (_cPointer == IntPtr.Zero)
+            {
+                throw new ObjectDisposedException($"This {GetType().Name} instance has been disposed and should not be used.");
+            }
+        }
 
         private IntPtr _cPointer = IntPtr.Zero;
     }
